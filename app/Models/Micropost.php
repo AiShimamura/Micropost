@@ -22,7 +22,7 @@ class Micropost extends Model
            /**
      * この投稿をお気に入りに入れているユーザ。（Userモデルとの関係を定義）
      */
-    public function favorites()
+    public function favorites_users()
     {
         return $this->belongsToMany(User::class, 'favorite', 'user_id', 'micropost_id')->withTimestamps();
     }

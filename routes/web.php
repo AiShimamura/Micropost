@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('unfollow', [UserFollowController::class, 'destroy'])->name('user.unfollow');
         Route::get('followings', [UsersController::class, 'followings'])->name('users.followings');
         Route::get('followers', [UsersController::class, 'followers'])->name('users.followers');
-        Route::get('favorite', [UsersController::class, 'favorites'])->name('users.favorite');            // 追加
+        Route::get('favorite', [UsersController::class, 'favorites'])->name('users.favorite'); // 追加
     });
     
     Route::resource('users', UsersController::class, ['only' => ['index', 'show']]);
