@@ -55,7 +55,7 @@ class User extends Authenticatable
      */
     public function loadRelationshipCounts()
     {
-        $this->loadCount(['microposts', 'followings', 'followers']);
+        $this->loadCount(['microposts', 'followings', 'followers','favorites']);
     }
     
         /**
@@ -135,4 +135,71 @@ class User extends Authenticatable
         // それらのユーザが所有する投稿に絞り込む
         return Micropost::whereIn('user_id', $userIds);
     }
+    
+           /**
+     * このユーザがお気に入りにいれた投稿一覧。（Userモデルとの関係を定義）
+     */
+    public function favorites()
+    {
+    return $this->belongsToMany(Micropost::class, 'favorite', 'user_id', 'micropost_id')->withTimestamps();
+    }
+    
+    /**
+     * $micropost_idで指定された投稿をお気に入りする。
+     *
+     * @param  int  $userId
+     * @return bool
+     */
+    public function favorite($micropost_id)
+    {
+        $exist = $this->is_favorite($micropost_id);
+        $its_this = $this->id == $micropost_id;
+        
+        if ($exist || $its_this) {
+            return false;
+        } else {
+            $this->favorites()->attach($micropost_id);
+            return true;
+        }
+    }
+    
+    /**
+     * $micropost_idで指定された投稿をお気に入りから削除する。
+     * 
+     * @param  int $usereId
+     * @return bool
+     */
+    public function unfavorite($micropost_id)
+    {
+        $exist = $this->is_favorite($micropost_id);
+        $its_this = $this->id == $micropost_id;
+        
+        if ($exist && !$its_this) {
+            $this->favorites()->detach($micropost_id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * 指定された$micropost_idの投稿をこのユーザがお気に入り中であるか調べる。お気に入り中ならtrueを返す。
+     * 
+     */
+    public function is_favorite($micropost_id)
+    {
+        return $this->favorites()->where('micropost_id', $micropost_id)->exists();
+    }
+
+
+    /**
+     * 指定された$micropost_idの投稿がユーザにお気に入りされているか調べる。お気に入り中ならtrueを返す。
+     * 
+     */
+    public function is_favorited_by($micropost_id)
+    {
+        return $this->favorites()->where('micropost_id', $micropost_id)->exists();
+    }
+
+    
 }

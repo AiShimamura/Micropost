@@ -9,8 +9,8 @@
                             <img src="{{ Gravatar::get($micropost->user->email) }}" alt="" />
                         </div>
                     </div>
-                    <div>
-                        <div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-center">
                             {{-- 投稿の所有者のユーザ詳細ページへのリンク --}}
                             <a class="link link-hover text-info" href="{{ route('users.show', $micropost->user->id) }}">{{ $micropost->user->name }}</a>
                             <span class="text-muted text-gray-500">posted at {{ $micropost->created_at }}</span>
@@ -19,7 +19,9 @@
                             {{-- 投稿内容 --}}
                             <p class="mb-0">{!! nl2br(e($micropost->content)) !!}</p>
                         </div>
-                        <div>
+                        <div class="flex items-center gap-x-2">
+                            {{-- お気に入り／お気に入り削除ボタン --}}
+                            @include('microposts_favorite.favorite_button')
                             @if (Auth::id() == $micropost->user_id)
                                 {{-- 投稿削除ボタンのフォーム --}}
                                 <form method="POST" action="{{ route('microposts.destroy', $micropost->id) }}">

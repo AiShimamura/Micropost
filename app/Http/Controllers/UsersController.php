@@ -85,4 +85,28 @@ class UsersController extends Controller
             'users' => $followers,
         ]);
     }// 追加
+    
+        /**
+     * ユーザのお気に入り一覧ページを表示するアクション。
+     *
+     * @param  $id  ユーザのid
+     * @return \Illuminate\Http\Response
+     */
+    public function favorites($id)
+    {
+        // idの値でユーザを検索して取得
+        $user = User::findOrFail($id);
+
+        // 関係するモデルの件数をロード
+        $user->loadRelationshipCounts();
+
+        // ユーザのお気に入り一覧を取得
+        $microposts = $user->favorites()->paginate(10);
+
+        // お気に入り一覧ビューでそれらを表示
+        return view('users.favorite', [
+            'user' => $user,
+            'microposts' => $microposts,
+        ]);
+    }// 追加
 }
